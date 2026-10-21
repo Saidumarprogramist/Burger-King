@@ -1,10 +1,50 @@
 @import "tailwindcss";
 
-body {
-  background: #f2e8d9;
-  overflow-x: hidden;
+@theme {
+  --font-sans: "Rubik", ui-sans-serif, system-ui, sans-serif;
+  --color-cream: #f2e8d9;
+  --color-cream-dark: #e9e0d1;
+  --color-brown: #502314;
+  --color-brown-light: #a68b7f;
+  --color-flame: #f4823d;
+  --color-flame-dark: #e06a22;
 }
 
-body::-webkit-scrollbar {
-    display: none;
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-brown);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer base {
+  :focus-visible {
+    outline: 3px solid var(--color-flame);
+    outline-offset: 2px;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
