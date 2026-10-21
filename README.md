@@ -1,16 +1,21 @@
-# React + Vite
+# Burger King — меню
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Одностраничный сайт-меню Burger King Узбекистан на React 19 + Vite + Tailwind CSS 4.
 
-Currently, two official plugins are available:
+## Запуск
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev      # dev-сервер на http://localhost:5173
+npm run build    # продакшен-сборка в dist/
+npm run lint     # ESLint
+```
 
-## React Compiler
+## Структура
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `src/constants/menu.js` — категории и позиции меню (название, цена, картинка).
+- `src/constants/data.js` — промо-баннеры.
+- `src/components/menu/` — навигация по категориям, секция категории и карточка товара.
+- `src/components/navbar`, `header`, `hero`, `footer` — шапка, баннеры и подвал.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Чтобы добавить товар или категорию, достаточно изменить `src/constants/menu.js`.

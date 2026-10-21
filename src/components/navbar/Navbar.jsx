@@ -1,109 +1,184 @@
-import { IoIosArrowDown } from 'react-icons/io';
-import logo from '../../assets/Logo.svg';
-import valute from '../../assets/Valute.svg';
-import { IoClose, IoSearch } from 'react-icons/io5';
-import { BiMenu } from 'react-icons/bi';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react'
+import { BiMenu } from 'react-icons/bi'
+import { IoClose, IoSearch } from 'react-icons/io5'
+import logo from '../../assets/Logo.svg'
+import wallet from '../../assets/Valute.svg'
 
-export default function Navbar() {
-  const [IsActive, setIsActive] = useState(false);
+const LINKS = [
+  { label: 'Рестораны', href: '#footer' },
+  { label: 'Вакансии', href: 'https://burgerking.uz/vacancies' },
+]
+
+function SearchField({ query, onQueryChange, inputRef, className = '' }) {
+  return (
+    <label
+      className={`flex items-center gap-2 rounded-full bg-cream-dark px-4 py-2.5 focus-within:ring-2 focus-within:ring-flame ${className}`}
+    >
+      <IoSearch className='shrink-0 text-lg' aria-hidden />
+      <span className='sr-only'>Поиск по меню</span>
+      <input
+        ref={inputRef}
+        type='search'
+        value={query}
+        onChange={event => onQueryChange(event.target.value)}
+        placeholder='Поиск по меню'
+        className='w-full min-w-0 bg-transparent text-base outline-none placeholder:text-brown-light focus-visible:outline-none'
+      />
+    </label>
+  )
+}
+
+function CartBadge({ className = '' }) {
+  return (
+    <span
+      className={`flex items-center gap-2 rounded-full border border-flame px-4 py-2 font-bold whitespace-nowrap text-flame ${className}`}
+      aria-label='Корзина: 0 UZS'
+    >
+      <img src={wallet} width={14} height={18} alt='' />0 UZS
+    </span>
+  )
+}
+
+export default function Navbar({ query, onQueryChange }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const mobileSearchRef = useRef(null)
+
+  useEffect(() => {
+    if (!isMenuOpen) return
+    const onKeyDown = event => {
+      if (event.key === 'Escape') setIsMenuOpen(false)
+    }
+    document.body.style.overflow = 'hidden'
+    document.addEventListener('keydown', onKeyDown)
+    mobileSearchRef.current?.focus()
+    return () => {
+      document.body.style.overflow = ''
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [isMenuOpen])
+
+  const closeMenu = () => setIsMenuOpen(false)
+
+  const showResults = () => {
+    closeMenu()
+    if (query) document.getElementById('menu-top')?.scrollIntoView()
+  }
 
   return (
     <>
-      <div className='w-full py-2 shadow-2xl'>
-        {/* Desktop */}
-        <div className='container justify-around space-x-10 mx-auto hidden md:flex h-15'>
-          <div className='flex space-x-3 items-center justify-around text-[#532013]'>
-            <img src={logo} width={40} alt='' />
-            <div className='flex justify-between h-10 font-normal text-[18px]'>
-              <h5 className='w-full flex items-center gap-2 font-bold'>
-                Our Resturants <IoIosArrowDown />
-              </h5>
-            </div>
-          </div>
-          <div className='w-2/3 flex items-center gap-3'>
-            <ul className='flex w-full justify-between items-center'>
-              <li className='w-2/3 text-[#A68B7F] text-[18px] font-extrabold'>
-                <a href='#'>Careers</a>
-              </li>
-              <li className='bg-[#e9e0d1] rounded-full p-3 text-[#532013]'>
-                <a href=''>
-                  <IoSearch />
-                </a>
-              </li>
-              <li className='bg-[#f4823d] p-2 px-3 text-center rounded-full'>
-                <a href='' className='text-[14px] text-white font-bold'>
-                  EN
-                </a>
-              </li>
-              <li className='flex border text-[18px] text-[#f4823d] border-[#f4823d] rounded-3xl px-5 py-2'>
-                <a href='' className='flex gap-2 font-bold'>
-                  <img src={valute} width={15} alt='' />
-                  0,00 UZS
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
+      <header className='sticky top-0 z-40 border-b border-cream-dark bg-cream/90 backdrop-blur'>
+        <div className='mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:h-20 lg:px-8'>
+          <a
+            href='#'
+            className='flex shrink-0 items-center gap-3'
+            aria-label='Burger King — на главную'
+          >
+            <img src={logo} width={41} height={45} alt='' />
+            <span className='hidden text-xl font-extrabold sm:inline'>
+              Burger King
+            </span>
+          </a>
 
-        {/* Mobile */}
-        <div className='flex justify-between pl-3 md:hidden'>
-          <div className='text-start flex items-center gap-3'>
-            <img src={logo} alt='' />
-            <h5 className='font-normal text-2xl gap-2 text-[#532013]'>
-              Our Resturants
-            </h5>
+          <nav aria-label='Основная навигация' className='hidden md:block'>
+            <ul className='flex items-center gap-6 font-semibold'>
+              {LINKS.map(link => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    className='text-brown-light transition hover:text-brown'
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className='ml-auto hidden items-center gap-3 md:flex'>
+            <SearchField
+              query={query}
+              onQueryChange={onQueryChange}
+              className='w-56 lg:w-72'
+            />
+            <span className='rounded-full bg-flame px-3 py-2 text-sm font-bold text-white'>
+              RU
+            </span>
+            <CartBadge />
           </div>
+
           <button
-            onClick={() => setIsActive(true)}
-            className='py-4 px-4 border rounded-full border-[#f4823d] text-[#f4823d] mr-5 '
+            type='button'
+            onClick={() => setIsMenuOpen(true)}
+            aria-label='Открыть меню'
+            aria-expanded={isMenuOpen}
+            aria-controls='mobile-menu'
+            className='ml-auto rounded-full border border-flame p-2.5 text-2xl text-flame md:hidden'
           >
             <BiMenu />
           </button>
         </div>
-        {IsActive && (
-          <div className='w-full block h-auto py-5 bg-white top-0 absolute md:hidden'>
-            <div className='justify-end flex mr-7 mb-5'>
+      </header>
+
+      {isMenuOpen && (
+        <div
+          className='fixed inset-0 z-50 md:hidden'
+          id='mobile-menu'
+          role='dialog'
+          aria-modal='true'
+          aria-label='Меню'
+        >
+          <div
+            className='absolute inset-0 bg-brown/40'
+            onClick={closeMenu}
+            aria-hidden
+          />
+          <div className='absolute inset-x-0 top-0 rounded-b-3xl bg-white p-5 shadow-2xl'>
+            <div className='flex items-center justify-between'>
+              <img src={logo} width={41} height={45} alt='Burger King' />
               <button
-                onClick={() => setIsActive(false)}
-                className='p-3 border rounded-full border-[#f4823d] text-[#f4823d]'
+                type='button'
+                onClick={closeMenu}
+                aria-label='Закрыть меню'
+                className='rounded-full border border-flame p-2.5 text-2xl text-flame'
               >
-                <IoClose className='text-2xl' />
+                <IoClose />
               </button>
             </div>
-            <div className='w-full'>
-              <ul className='block mx-auto text-center space-y-3 px-8'>
-                <li className='text-[#A68B7F] text-[18px]'>
-                  <a href=''>Careers</a>
-                </li>
-                <hr className='text-amber-400 font-black' />
-                <li className='bg-[#e9e0d1] rounded-full p-3 text-[#532013]'>
+            <SearchField
+              query={query}
+              onQueryChange={onQueryChange}
+              inputRef={mobileSearchRef}
+              className='mt-5'
+            />
+            <ul className='mt-4 divide-y divide-cream-dark text-lg font-semibold'>
+              {LINKS.map(link => (
+                <li key={link.label}>
                   <a
-                    href=''
-                    className='flex text-[20px] justify-center gap-5 items-center'
+                    href={link.href}
+                    onClick={closeMenu}
+                    className='block py-3'
                   >
-                    <IoSearch className='mt-px' />
-                    <span>Search...</span>
+                    {link.label}
                   </a>
                 </li>
-                <hr className='text-amber-400 font-black' />
-                <li className='bg-[#f4823d] p-3 text-center rounded-full'>
-                  <a href='' className='text-[20px] text-white font-bold'>
-                    EN
-                  </a>
-                </li>
-                <hr className='text-amber-400 font-black' />
-                <li className='flex justify-center border text-[20px] text-[#f4823d] border-[#f4823d] rounded-3xl py-2'>
-                  <a href='' className='flex gap-2 font-bold'>
-                    <img src={valute} width={15} alt='' />
-                    0,00 UZS
-                  </a>
-                </li>
-              </ul>
+              ))}
+            </ul>
+            <div className='mt-4 flex items-center justify-between gap-3'>
+              <span className='rounded-full bg-flame px-4 py-2 font-bold text-white'>
+                RU
+              </span>
+              <CartBadge />
             </div>
+            <button
+              type='button'
+              onClick={showResults}
+              className='mt-5 w-full rounded-full bg-brown py-3 font-semibold text-white'
+            >
+              {query ? 'Показать результаты' : 'Готово'}
+            </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </>
-  );
+  )
 }
