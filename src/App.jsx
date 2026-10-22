@@ -9,6 +9,8 @@ import CartDrawer from './components/cart/CartDrawer'
 import { MENU } from './constants/menu'
 import { readCart, saveCart, changeQuantity, removeItem, cartDetails } from './utils/cart'
 
+function getStorage() { try { return window.localStorage } catch { return null } }
+
 function filterMenu(query) {
   const normalized = query.trim().toLowerCase()
   if (!normalized) return MENU
@@ -19,11 +21,11 @@ function filterMenu(query) {
 }
 export default function App() {
   const [query, setQuery] = useState('')
-  const [cart, setCart] = useState(() => readCart(typeof window === 'undefined' ? null : window.localStorage))
+  const [cart, setCart] = useState(() => readCart(typeof window === 'undefined' ? null : getStorage()))
   const [cartOpen, setCartOpen] = useState(false)
   const categories = useMemo(() => filterMenu(query), [query])
   const details = useMemo(() => cartDetails(cart), [cart])
-  useEffect(() => { saveCart(window.localStorage, cart) }, [cart])
+  useEffect(() => { saveCart(getStorage(), cart) }, [cart])
   const change = (id, delta) => setCart(current => changeQuantity(current, id, delta))
   return (
     <>
