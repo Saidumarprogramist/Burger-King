@@ -4,7 +4,7 @@ export default function useDialog(open, close, desktopQuery) {
   const containerRef = useRef(null)
   const openerRef = useRef(null)
   const closeRef = useRef(close)
-  closeRef.current = close
+  useEffect(() => { closeRef.current = close }, [close])
 
   useEffect(() => {
     if (!open) return
