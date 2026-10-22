@@ -8,6 +8,7 @@ export default function useDialog(open, close, desktopQuery) {
 
   useEffect(() => {
     if (!open) return
+    const previousFocus = document.activeElement
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     const element = containerRef.current
@@ -38,7 +39,8 @@ export default function useDialog(open, close, desktopQuery) {
       document.body.style.overflow = previousOverflow
       document.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('resize', onResize)
-      openerRef.current?.focus()
+      if (openerRef.current?.isConnected) openerRef.current.focus()
+      else if (previousFocus?.isConnected) previousFocus.focus()
     }
   }, [open, desktopQuery])
 
