@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "test": "node --test",
+    "test": "node --test --experimental-loader ./tests/assets-loader.mjs src/utils/cart.test.js",
     "preview": "vite preview"
   },
   "dependencies": {
